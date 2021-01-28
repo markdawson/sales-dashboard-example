@@ -110,4 +110,4 @@ Finally, let's create the `"sales_dashboard.html"` template that we referenced i
 
 Great! Now if we run our app, we can see the data appear in an html table like this:
 
-![Sales Dashboard Table](sales_dashboard_table.png.png "Sales Dashboard Table")
+![Sales Dashboard Table](sales_dashboard_table.png "Sales Dashboard Table")
