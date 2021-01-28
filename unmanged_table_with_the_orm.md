@@ -1,7 +1,7 @@
 # Accessing External Data with Unmanaged Tables in the Django ORM
 
 Sometimes when building our Django app, we'd like to access some existing external SQL dataset. It's easy
-to access that data through Django's ORM (objet relational mapper) using un unmanaged table. 
+to access that data through Django's ORM (object relational mapper) using unmanaged table. 
 
 We'll walk through an example here of how we would pull some external sales data into a Django powered dashboard.
 Imagine you have the following data in a Postgres or SQLite3 table. 
@@ -22,7 +22,7 @@ Imagine you have the following data in a Postgres or SQLite3 table.
 For simplicity, I have added this data to an SQLite3 database called `sales.db` where this table is 
 called `sales_2020Q4`. This would work the same way for Postgres or any of Django's [supported databases](https://docs.djangoproject.com/en/3.1/ref/databases/). 
 
-## Add an addition database connection
+## Add an additional database connection
 In Django, you can have [multiple database backends](https://docs.djangoproject.com/en/3.1/topics/db/multi-db/).
 You just need to add them to your `settings.py` file. In your `settings.py` file, go ahead and add an additional
 database like this:
@@ -59,10 +59,10 @@ Here are a few things to remember with an unmanaged model in Django:
 - The model's fields should be created to match the existing table's schema.
 - You should make sure to specify the primary key manually on the field that is the primary key.
 - It can create, update, and delete individual rows in the unmanaged table.
-- The Django test tools will not create a test database for any unmanged tables.
+- The Django test tools will not create a test database for any unmanaged tables.
 
 ## Use the unmanaged model in our view
-Next let's build our view using the unmanaged model. 
+Next, let's build our view using the unmanaged model. 
 
 ```python
 def sales_dashboard_view(request):
@@ -108,6 +108,6 @@ Finally, let's create the `"sales_dashboard.html"` template that we referenced i
 </html>
 ```
 
-Great! Now if we run our app, we can see the data appear in an html table like this:
+Great! Now if we run our app, we can see the data appear in an HTML table like this:
 
 ![Sales Dashboard Table](sales_dashboard_table.png "Sales Dashboard Table")
