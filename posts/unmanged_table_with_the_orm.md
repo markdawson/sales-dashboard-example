@@ -90,7 +90,7 @@ Here are a few things to remember with an unmanaged model in Django:
 If you don't specify the primary key on `days` you'll get an error that says `no such column: sales_2020Q4.id`. 
 You might ask, why is it looking for an `id` field? After all, I'm not using that field anywhere. When a table is 
 managed by the ORM, it will create an [automatic primary key field](https://docs.djangoproject.com/en/3.1/topics/db/models/#automatic-primary-key-fields)
-called `id`. So, because we didn't specify a primary key, the model assumes that there's a field called `id` which is 
+called `id`. So, because we didn't specify a primary key, the model assumes that there's a field called `id` which is the 
 primary key. Note that we can always access the primary key in a model by using the `.pk` field. 
 
 ### Specifying the database backend with the ORM
