@@ -76,4 +76,4 @@ HTML characters.
 ## Final Result
 When I run my page I shold have a nice chart of our sales data to look at:
 
-![Sales Dashboard Chart](sales_dashboard_bar_chart.png "Sales Dashboard Chart")
+![Sales Dashboard Chart](./img/sales_dashboard_bar_chart.png "Sales Dashboard Chart")

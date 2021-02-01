@@ -1,7 +1,7 @@
 # Accessing External Data with Unmanaged Tables in the Django ORM
 
 Sometimes when building our Django app, we'd like to access some existing external SQL dataset. It's easy
-to access that data through Django's ORM (object relational mapper) using unmanaged table. 
+to access that data through Django's ORM (object relational mapper) using an unmanaged table. 
 
 We'll walk through an example here of how we would pull some external sales data into a Django powered dashboard.
 Imagine you have the following data in a Postgres or SQLite3 table. 
@@ -56,23 +56,57 @@ class SalesDay(models.Model):
 Here are a few things to remember with an unmanaged model in Django:
 
 - It will not create migrations for the model or manage the schema of the underlying table.
-- The model's fields should be created to match the existing table's schema.
-- You should make sure to specify the primary key manually on the field that is the primary key.
+- The model's fields should be created to match the existing table's schema. 
+- I recommend specifying all the fields in the database. If you don't the model will still work fine, but it 
+  will be confusing for whoever reads your code next.
 - It can create, update, and delete individual rows in the unmanaged table.
 - The Django test tools will not create a test database for any unmanaged tables.
+
+### A word about automatic primary keys
+If you don't specify the primary key on `days` you'll get an error that says `no such column: sales_2020Q4.id`. 
+You might ask, why is it looking for an `id` field? After all, I'm not using that field anywhere. When a table is 
+managed by the ORM, it will create an [automatic primary key field](https://docs.djangoproject.com/en/3.1/topics/db/models/#automatic-primary-key-fields)
+called `id`. So, because we didn't specify a primary key, the model assumes that there's a field called `id` which is 
+primary key. Note that we can always access the primary key in a model by using the `.pk` field. 
+
+### Specifying the database backend with the ORM
+Because we have two databases backends, we have to specify which database we want our model [Manager](https://docs.djangoproject.com/en/3.1/topics/db/managers/) 
+to talk to. We do that by calling `.using("sales_db")`method like this `first_sale = Salesday.objects.using("sales_db").first()`. 
+If we don't do that, then it will assume we're using our default db, and it won't find the table.
+
+(Another way we could specify the database backend is by using a [database router](https://docs.djangoproject.com/en/3.1/topics/db/multi-db/#database-routers).)
+
+### Trying out the unmanaged model in the shell
+I'd recommend using `python manage.py shell`, to experiment with your unmanaged model.
+
+```python
+>>> from sales_dashboard.models import SalesDay
+>>> s = SalesDay.objects.first() # Fails because it's trying to use the "default" database
+django.db.utils.OperationalError: no such table: sales_2020Q4
+
+>>> s = SalesDay.objects.using("sales_db").first()
+>>> s.day
+datetime.date(2020, 10, 1)
+
+>>> s.pk # Same as "day" because day is the primary key
+datetime.date(2020, 10, 1)
+
+>>> s.id # Fails because the model is not using automatic primary keys
+AttributeError: 'SalesDay' object has no attribute 'id'
+``` 
 
 ## Use the unmanaged model in our view
 Next, let's build our view using the unmanaged model. 
 
 ```python
+from django.shortcuts import render
+from .models import SalesDay
+
 def sales_dashboard_view(request):
     days = SalesDay.objects.using("sales_db").all()
     return render(request, "sales_dashboard.html", {"days": days})
 ```
 
-Because we have two databases backends, it's important that we remember to specify call `.using("sales_db")`
-method on our model manager. If we don't do that, then it will assume we're using our default db, and it won't
-find the table.
 
 ## Create a template to display our model
 Finally, let's create the `"sales_dashboard.html"` template that we referenced in our view. I'll just create a simple
@@ -110,4 +144,4 @@ Finally, let's create the `"sales_dashboard.html"` template that we referenced i
 
 Great! Now if we run our app, we can see the data appear in an HTML table like this:
 
-![Sales Dashboard Table](sales_dashboard_table.png "Sales Dashboard Table")
+![Sales Dashboard Table](./img/sales_dashboard_table.png "Sales Dashboard Table")
